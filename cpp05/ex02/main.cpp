@@ -1,29 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main4.cpp                                          :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/02 12:46:15 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/02 16:30:14 by skoulen          ###   ########.fr       */
+/*   Created: 2023/05/30 17:46:09 by skoulen           #+#    #+#             */
+/*   Updated: 2023/06/05 13:11:18 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
+#include "ShrubberyCreationForm.hpp"
+#include "RobotomyRequestForm.hpp"
 #include <iostream>
 
 using std::cout;
 using std::endl;
 
 int main()
-{
-	Bureaucrat alice("Alice", 17);
-	Bureaucrat bob("Bob", 2);
+{	
+	Bureaucrat b1("Alice", 1);
+	Bureaucrat b2("Bob", 130);
 
-	Form f1("Form1", 15, 2);
-	Form f2("Form2", 145, 146);
+	cout<<endl;
 
-	alice.signForm(f1);
-	bob.signForm(f2);
+	ShrubberyCreationForm s1("garden");
+	b1.signForm(s1);
+	b1.executeForm(s1);
+
+	cout<<endl;
+
+	RobotomyRequestForm r1("Bob");
+	b1.signForm(r1);
+	b1.executeForm(r1);
+
+	cout<<endl;
+
+	b2.executeForm(r1);
+
+	cout<<endl;
+
+
+	return 0;
 }
