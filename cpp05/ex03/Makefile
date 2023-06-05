@@ -6,7 +6,7 @@
 #    By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/30 15:28:26 by skoulen           #+#    #+#              #
-#    Updated: 2023/06/05 16:20:04 by skoulen          ###   ########.fr        #
+#    Updated: 2023/06/05 17:35:07 by skoulen          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ endif
 NAME = program
 
 CLASSES = Bureaucrat AForm ShrubberyCreationForm RobotomyRequestForm\
-		  PresidentialPardonForm
+		  PresidentialPardonForm Intern
 
 SRCS = $(addsuffix .cpp, $(CLASSES)) main.cpp
 HEADERS = $(addsuffix .hpp, $(CLASSES))
