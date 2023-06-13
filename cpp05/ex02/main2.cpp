@@ -5,15 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/30 17:46:09 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/13 10:25:28 by skoulen          ###   ########.fr       */
+/*   Created: 2023/06/13 10:06:42 by skoulen           #+#    #+#             */
+/*   Updated: 2023/06/13 10:24:37 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
-#include "ShrubberyCreationForm.hpp"
 #include "RobotomyRequestForm.hpp"
-#include "PresidentialPardonForm.hpp"
 #include <iostream>
 
 using std::cout;
@@ -21,40 +19,38 @@ using std::endl;
 
 int main()
 {
-	Bureaucrat b1("Alice", 1);
-	Bureaucrat b2("Bob", 130);
+	Bureaucrat	alice("Alice", 17);
+
+	AForm*	form = new RobotomyRequestForm("Bob");
+	AForm*	form1 = new RobotomyRequestForm("Charles");
+	AForm*	form2 = new RobotomyRequestForm("David");
+	AForm*	form3 = new RobotomyRequestForm("Eric");
+	cout<<endl;
+
+	alice.executeForm(*form);
 
 	cout<<endl;
 
-	ShrubberyCreationForm s1("trucbidule");
-	b1.signForm(s1);
-	b1.executeForm(s1);
+	alice.signForm(*form);
+	alice.executeForm(*form);
+
+	cout<<endl;
+	alice.signForm(*form1);
+	alice.signForm(*form2);
+	alice.signForm(*form3);
 
 	cout<<endl;
 
-	RobotomyRequestForm r1("Bob");
-	b1.signForm(r1);
-	b1.executeForm(r1);
+	alice.executeForm(*form1);
+	alice.executeForm(*form2);
+	alice.executeForm(*form3);
 
 	cout<<endl;
 
-	b2.executeForm(r1);
+	delete form;
+	delete form1;
+	delete form2;
+	delete form3;
 
-	cout<<endl;
-
-	PresidentialPardonForm p1("Charles");
-	b2.signForm(p1);
-	b1.signForm(p1);
-	b2.executeForm(p1);
-	b1.executeForm(p1);
-
-	cout<<endl;
-
-	cout<<s1<<endl;
-	cout<<r1<<endl;
-	cout<<p1<<endl;
-
-	cout<<endl;
-
-	return 0;
+	return (0);
 }
