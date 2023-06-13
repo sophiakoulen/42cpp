@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 17:02:36 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/05 12:26:12 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/06/13 10:00:59 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,15 @@ const char	*AForm::FormNotSignedException::what() const throw()
 	return ("AForm::FormNotSignedException");
 }
 
+const char	*AForm::FormAlreadySignedException::what() const throw()
+{
+	return ("AForm::FormAlreadySignedException");
+}
+
 void	AForm::beSigned(const Bureaucrat& b)
 {
+	if (_isSigned)
+		throw AForm::FormAlreadySignedException();
 	if (_gradeToSign < b.getGrade())
 		throw AForm::GradeTooLowException();
 	_isSigned = true;

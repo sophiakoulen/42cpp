@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:39:30 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/05 18:34:14 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/06/13 10:41:24 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,23 @@ AForm*	Intern::PPFFactory(std::string target) const
 	return new PresidentialPardonForm(target);
 }
 
+#define N_OBJS	3
+
 AForm*	Intern::makeForm(std::string name, std::string target)
 {
-	AForm*	(Intern::*func[3])(std::string) const = {&Intern::RRFFactory, &Intern::SCFFactory,
-		&Intern::PPFFactory};
-	std::string names[] = {"robotomy request", "shrubbery creation", "presidential pardon"};
+	AForm*	(Intern::*func[N_OBJS])(std::string) const = {
+		&Intern::RRFFactory,
+		&Intern::SCFFactory,
+		&Intern::PPFFactory
+	};
 
-	for (int i = 0; i < 3; i++)
+	std::string names[N_OBJS] = {
+		"robotomy request",
+		"shrubbery creation",
+		"presidential pardon"
+	};
+
+	for (int i = 0; i < N_OBJS; i++)
 	{
 		if (name == names[i])
 			return (((*this).*func[i])(target));
