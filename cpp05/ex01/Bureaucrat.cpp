@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:55:30 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/02 17:37:00 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/06/13 10:30:33 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,11 @@ void	Bureaucrat::signForm(Form& f)
 	{
 		f.beSigned(*this);
 		cout<<_name<<" signed "<<f.getName()<<endl;
+	}
+	catch (Form::FormAlreadySignedException& e)
+	{
+		cout<<_name<<" couldn't sign "<<f.getName()
+			<<" because it had already been signed"<<endl;
 	}
 	catch (Form::GradeTooLowException& e)
 	{

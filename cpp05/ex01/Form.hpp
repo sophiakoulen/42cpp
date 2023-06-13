@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:40:20 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/02 17:35:41 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/06/13 10:27:56 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,14 @@ class Form
 			public:
 				virtual const char	*what() const throw();
 		};
-		
+
 		class GradeTooLowException : public std::exception
+		{
+			public:
+				virtual const char	*what() const throw();
+		};
+
+		class FormAlreadySignedException : public std::exception
 		{
 			public:
 				virtual const char	*what() const throw();
@@ -50,7 +56,7 @@ class Form
 		bool				_isSigned;
 		const int			_gradeToSign;
 		const int			_gradeToExecute;
-		
+
 		Form();
 };
 
