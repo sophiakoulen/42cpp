@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 12:39:44 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/09 18:02:04 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/04 17:01:46 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ int	ScalarConverter::toInt(const std::string& str, int *res)
 	long_res = std::strtol(start_ptr, &end_ptr, 0);
 	if (*end_ptr != '\0')
 		return (-1);
-	if (long_res < (long int) INT_MIN || long_res > (long int) INT_MAX)
+	if (long_res < static_cast<long int>(INT_MIN) || long_res > static_cast<long int>(INT_MAX))
 		return (-1);
-	*res = (int) long_res;
+	*res = static_cast<int>(long_res);
 	return (0);
 }
 
@@ -67,7 +67,7 @@ int ScalarConverter::toFloat(const std::string& str, float *res)
 		return (-1);
 	if (errno == ERANGE)
 		return (-1);
-	*res = (float) double_res;
+	*res = static_cast<float>(double_res);
 	return (0);
 }
 
@@ -142,30 +142,30 @@ void	ScalarConverter::writeAsChar(const std::string &str)
 		ScalarConverter::toInt(str, &val.i);
 		if (val.i < CHAR_MIN || val.i > CHAR_MAX)
 			cout<<"impossible";
-		else if (!isprint((char) val.i))
+		else if (!isprint(static_cast<char>(val.i)))
 			cout<<"Non displayable";
 		else
-			cout<<(char) val.i;
+			cout<<static_cast<char>(val.i);
 	}
 	else if (type == FLOAT)
 	{
 		ScalarConverter::toFloat(str, &val.f);
 		if (std::isnan(val.f) || (float) (char) val.f - val.f < - FLT_EPSILON || (float) (char) val.f - val.f > FLT_EPSILON)
 			cout<<"impossible";
-		else if (!isprint((char)val.f))
+		else if (!isprint(static_cast<char>(val.f)))
 			cout<<"Non displayable";
 		else
-			cout<<(char)val.f;
+			cout<<static_cast<char>(val.f);
 	}
 	else if (type == DOUBLE)
 	{
 		ScalarConverter::toDouble(str, &val.d);
 		if (std::isnan(val.d) || (char) val.d - val.d < - DBL_EPSILON || (double) (char) val.d - val.d > DBL_EPSILON)
 			cout<<"impossible";
-		else if (!isprint((char)val.d))
+		else if (!isprint(static_cast<char>(val.f)))
 			cout<<"Non displayable";
 		else
-			cout<<(char)val.d;
+			cout<<static_cast<char>(val.d);
 	}
 	else
 	{
@@ -183,7 +183,7 @@ void	ScalarConverter::writeAsInt(const std::string &str)
 	if (type == CHAR)
 	{
 		ScalarConverter::toChar(str, &val.c);
-		cout<<(int)val.c;	
+		cout<<static_cast<int>(val.c);
 	}
 	else if (type == INT)
 	{
@@ -196,7 +196,7 @@ void	ScalarConverter::writeAsInt(const std::string &str)
 		if (std::isnan(val.f) || (float) (int) val.f - val.f < - FLT_EPSILON || (float) (int) val.f - val.f > FLT_EPSILON)
 			cout<<"impossible";
 		else
-			cout<<(int)val.f;
+			cout<<static_cast<int>(val.f);
 	}
 	else if (type == DOUBLE)
 	{
@@ -204,7 +204,7 @@ void	ScalarConverter::writeAsInt(const std::string &str)
 		if (std::isnan(val.d) || (double) (int) val.d - val.d < - DBL_EPSILON || (double) (int) val.d - val.d > DBL_EPSILON)
 			cout<<"impossible";
 		else
-			cout<<(int)val.d;
+			cout<<static_cast<int>(val.d);
 	}
 	else
 	{
@@ -224,12 +224,12 @@ void	ScalarConverter::writeAsFloat(const std::string &str)
 	if (type == CHAR)
 	{
 		ScalarConverter::toChar(str, &val.c);
-		cout<<(float)val.c<<"f";	
+		cout<<static_cast<float>(val.c)<<"f";	
 	}
 	else if (type == INT)
 	{
 		ScalarConverter::toInt(str, &val.i);
-		cout<<(float)val.i<<"f";
+		cout<<static_cast<float>(val.i)<<"f";
 	}
 	else if (type == FLOAT)
 	{
@@ -242,7 +242,7 @@ void	ScalarConverter::writeAsFloat(const std::string &str)
 		if ((double) (float) val.d - val.d < - FLT_EPSILON || (double) (float) val.d - val.d > FLT_EPSILON)
 			cout<<"impossible";
 		else
-			cout<<(float)val.d<<"f";
+			cout<<static_cast<float>(val.d)<<"f";
 	}
 	else
 	{
@@ -264,22 +264,22 @@ void	ScalarConverter::writeAsDouble(const std::string &str)
 	if (type == CHAR)
 	{
 		ScalarConverter::toChar(str, &val.c);
-		cout<<(double)val.c;	
+		cout<<static_cast<double>(val.c);	
 	}
 	else if (type == INT)
 	{
 		ScalarConverter::toInt(str, &val.i);
-		cout<<(double)val.i;
+		cout<<static_cast<double>(val.i);
 	}
 	else if (type == FLOAT)
 	{
 		ScalarConverter::toFloat(str, &val.f);
-		cout<<(double)val.f;
+		cout<<static_cast<double>(val.f);
 	}
 	else if (type == DOUBLE)
 	{
 		ScalarConverter::toDouble(str, &val.d);
-		cout<<val.d;
+		cout<<static_cast<double>(val.d);
 	}
 	else
 	{
