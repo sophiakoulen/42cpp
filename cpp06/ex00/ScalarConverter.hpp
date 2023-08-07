@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 12:31:26 by skoulen           #+#    #+#             */
-/*   Updated: 2023/06/09 18:08:44 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/07 10:44:15 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,7 @@ class ScalarConverter
 		static void	convert(const std::string& str);
 	
 	private:
-		static int	detectType(const std::string& str);
-		static bool	isChar(const std::string& str);
-		static bool isInt(const std::string& str);
-		static bool isFloat(const std::string& str);
-		static bool isDouble(const std::string& str);
+		static int	detectType(const std::string& str, void *val);
 		static int	toChar(const std::string& str, char *res);
 		static int	toInt(const std::string& str, int *res);
 		static int	toFloat(const std::string& str, float *res);
