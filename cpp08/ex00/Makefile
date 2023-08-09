@@ -6,7 +6,7 @@
 #    By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/09 11:26:31 by skoulen           #+#    #+#              #
-#    Updated: 2023/08/07 12:53:35 by skoulen          ###   ########.fr        #
+#    Updated: 2023/08/09 10:24:19 by skoulen          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,9 @@ ifdef GPP
 endif
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98
+ifdef DEBUG
+	CFLAGS += -g -fsanitize=address
+endif
 
 CLASSES =
 SRCS = main.cpp $(addsuffix .cpp, $(CLASSES))
