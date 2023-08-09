@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausann>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/08 10:36:18 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/08 13:49:50 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/09 14:11:02 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ int main()
 	std::cout << "size of arr3: " << arr3.size() << std::endl;
 	std::cout << "arr3: " << arr3 << std::endl;
 	std::cout << "arr2: " << arr2 << std::endl;
+
+	arr3 = arr;
+	std::cout << "arr3: " << arr3 << std::endl;
 
 	Array<Array<float> > arr4(2);
 	std::cout << "size of arr4: " << arr4.size() << std::endl;
