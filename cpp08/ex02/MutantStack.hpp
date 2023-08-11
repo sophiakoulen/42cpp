@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausann>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:26:09 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/10 17:52:37 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/11 09:36:58 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ class MutantStack : public std::stack<T>
 {
 	class MutantStackIterator
 	{
-		typedef	T								value_type;
-		typedef std::ptrdiff_t					difference_type;
-		typedef	T&								reference;
-		typedef T*								pointer;
-		typedef std::bidirectional_iterator_tag	iterator_category;
-
 		public:
+			typedef	T								value_type;
+			typedef std::ptrdiff_t					difference_type;
+			typedef	T&								reference;
+			typedef T*								pointer;
+			typedef std::bidirectional_iterator_tag	iterator_category;
+
 			MutantStackIterator();
 			MutantStackIterator(const MutantStackIterator& it);
 			MutantStackIterator(size_t position, MutantStack<T>* ptr);
@@ -37,13 +37,15 @@ class MutantStack : public std::stack<T>
 
 			T&						operator*() const;
 			MutantStackIterator&	operator++();
+			MutantStackIterator		operator++(int);
+			MutantStackIterator&	operator--();
+			MutantStackIterator		operator--(int);
 
 			bool	operator==(const MutantStackIterator& rhs) const;
 			bool	operator!=(const MutantStackIterator& rhs) const;
 
-		private:
-			
-			size_t					_position;
+		private:	
+			size_t			_position;
 			MutantStack<T>*	_ptr;
 	};
 

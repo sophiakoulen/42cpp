@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausann>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 11:39:17 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/10 17:59:26 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/11 10:02:20 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typename MutantStack<T>::MutantStackIterator&	MutantStack<T>::MutantStackIterato
 {
 	_position	= rhs._position;
 	_ptr		= rhs._ptr;
+	return (*this);
 }
 
 template <typename T>
@@ -51,17 +52,23 @@ T&	MutantStack<T>::MutantStackIterator::operator*() const
 	std::stack<T *> stackB;
 	T*				elt;
 
-	for (size_t i = 0; i < _position; i++)
+	while (!_ptr->_stackA.empty())
 	{
-		stackB.push(_stackA.top());
-		_stackA.pop();
+		stackB.push(_ptr->_stackA.top());
+		_ptr->_stackA.pop();
 	}
 
-	elt = _stackA.top();
+	for (size_t i = 0; i < _position; i++)
+	{
+		_ptr->_stackA.push(stackB.top());
+		stackB.pop();
+	}
+
+	elt = stackB.top();
 
 	while (!stackB.empty())
 	{
-		_stackA->push(stackB.top());
+		_ptr->_stackA.push(stackB.top());
 		stackB.pop();
 	}
 
@@ -73,6 +80,29 @@ typename MutantStack<T>::MutantStackIterator&	MutantStack<T>::MutantStackIterato
 {
 	_position++;
 	return (*this);
+}
+
+template <typename T>
+typename MutantStack<T>::MutantStackIterator	MutantStack<T>::MutantStackIterator::operator++(int)
+{
+	MutantStack<T>::MutantStackIterator	old = *this;
+	operator++();
+	return (old);
+}
+
+template <typename T>
+typename MutantStack<T>::MutantStackIterator&	MutantStack<T>::MutantStackIterator::operator--()
+{
+	_position--;
+	return (*this);
+}
+
+template <typename T>
+typename MutantStack<T>::MutantStackIterator	MutantStack<T>::MutantStackIterator::operator--(int)
+{
+	MutantStack<T>::MutantStackIterator	old = *this;
+	operator--();
+	return (old);
 }
 
 template <typename T>
@@ -110,5 +140,5 @@ template <typename T>
 void	MutantStack<T>::pop()
 {
 	this->std::stack<T>::pop();
-	_stackB.pop();
+	_stackA.pop();
 }
