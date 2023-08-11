@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausann>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 11:39:17 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/11 10:02:20 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/11 10:55:22 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,59 @@ template <typename T>
 bool	MutantStack<T>::MutantStackIterator::operator!=(const MutantStack<T>::MutantStackIterator& rhs) const
 {
 	return !(*this == rhs);
+}
+
+template <typename T>
+MutantStack<T>::MutantStack()
+{
+
+}
+
+template <typename T>
+MutantStack<T>::~MutantStack()
+{
+
+}
+
+template <typename T>
+MutantStack<T>::MutantStack(const MutantStack<T>& m):
+	std::stack<T>(m)
+{
+	std::stack<T>	stackB;
+
+	while (!std::stack<T>::empty())
+	{
+		stackB.push(std::stack<T>::top());
+		std::stack<T>::pop();
+	}
+
+	while (!stackB.empty())
+	{
+		push(stackB.top());
+		stackB.pop();
+	}
+}
+
+template <typename T>
+MutantStack<T>&	MutantStack<T>::operator=(const MutantStack<T>& rhs)
+{
+	std::stack<T>::operator=(rhs);
+	
+	std::stack<T>	stackB;
+
+	while (!std::stack<T>::empty())
+	{
+		stackB.push(std::stack<T>::top());
+		std::stack<T>::pop();
+	}
+
+	while (!stackB.empty())
+	{
+		push(stackB.top());
+		stackB.pop();
+	}
+
+	return (*this);
 }
 
 template <typename T>
