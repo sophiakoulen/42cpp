@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:00:26 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/13 11:40:17 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/14 13:08:03 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,16 @@
 # define PMERGE_ME_H
 
 # include <algorithm>
+# include <sys/time.h>
+# include <iostream>
 
 template<typename Container>
 class PmergeMe : public Container
 {
+	private:
+		typedef typename Container::iterator	It;
+		typedef typename It::value_type			Val;
+
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe& p);
@@ -29,9 +35,10 @@ class PmergeMe : public Container
 		PmergeMe&	operator=(const PmergeMe& p);
 
 		float	sort(void);
-
-	private:
-
+		void	recursive_sort(It begin, It end, size_t step);
+		void	insert_range(It begin, It end, It pos);
+		void	swap_range(It b1, It e1, It b2, It e2);
+		It		binary_search(It begin, It end, size_t step, Val target);
 };
 
 # include "PmergeMe.tpp"
