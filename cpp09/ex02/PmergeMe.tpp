@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:01:24 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/16 14:50:32 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/16 17:44:07 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,43 +82,80 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 
 	std::cout << "End of recursive call; step = "<< step << std::endl;
 
-	/* start inserting the chunks */
+	/* divide the container into two chains:
+	 * the main_chain of sorted elements
+	 * the pend_chain of elements that need to be inserted into the main chain
+	 * the stray_elements remain unsorted yet 
+	 * */
+
+	Container	main_chain;
+	Container	pend_chain;
+	Container	stray_chain;
+
 	for (int i = 0; range - i >= 2 * (int)step; i += 2 * step)
 	{
-		std::cout << "i: " << i << "; i + step: " << i + (std::ptrdiff_t)step << std::endl; 
-		It pos = binary_search(Container::begin(), Container::begin() + i, step, *(Container::begin() + i + step));
-		std::cout << "pos: " << pos - Container::begin() << std::endl;
-		std::cout << "Range of insertion: [" << i + step << ", "<<i + 2 * step <<"]" << std::endl;
-		insert_range(Container::begin() + i + step, Container::begin() + i + 2 * step, pos);
-		std::cout << "[" << *this << "]" << std::endl;
+		std::cout << "i: " << i << std::endl;
+		main_chain.insert(main_chain.end(), Container::begin() + i, Container::begin() + i + step);
+		pend_chain.insert(pend_chain.end(), Container::begin() + i + step, Container::begin() + i + 2 * step);
 	}
 
-	//insert lonely chunk if there is one
 	if (range % (2 * step) >= step)
 	{
 		int i = (range / (2 * step)) * 2 * step;
-		std::cout << "Insertion of lonely chunk" << std::endl;
-		It pos = binary_search(Container::begin(), Container::begin() + i, step, *(Container::begin() + i));
-		std::cout << "pos: " << pos - Container::begin() << std::endl;
-		std::cout << "Range of insertion: [" << i << ", "<<i + step <<"]" << std::endl;
-		insert_range(Container::begin() + i, Container::begin() + i + step, pos);
-		std::cout << "[" << *this << "]" << std::endl;
+		pend_chain.insert(pend_chain.end(), Container::begin() + i, Container::begin() + i + step); 
 	}
 
+	if (range % step != 0)
+	{
+		int i = (range / step) * step;
+		stray_chain.insert(stray_chain.end(), Container::begin() + i, Container::end());
+	}
+
+	std::cout << "main_chain: ";
+	for (size_t i = 0; i < main_chain.size(); i++)
+		std::cout << main_chain[i] << " ";
+	std::cout << std::endl;
+	
+	std::cout << "pend_chain: ";
+	for (size_t i = 0; i < pend_chain.size(); i++)
+		std::cout << pend_chain[i] << " ";
+	std::cout << std::endl;
+
+	std::cout << "stray_chain: ";
+	for (size_t i = 0; i < stray_chain.size(); i++)
+		std::cout << stray_chain[i] << " ";
+	std::cout << std::endl;
+
+
+	/* start inserting the chunks */
+	for (unsigned int i = 0; i < pend_chain.size(); i += step)
+	{
+		It pos = binary_search(main_chain.begin(), main_chain.end(), step, pend_chain[i]);
+		std::cout << "position to insert: " << pos - main_chain.begin() << std::endl;
+		std::cout << "range to insert: [" << i << "; " << i + step << "]" << std::endl;
+		main_chain.insert(pos, pend_chain.begin() + i, pend_chain.begin() + i + step);
+	}
+
+	
+	std::cout << "Before operator=: [" << *this << "]" << std::endl;
+	Container::operator=(main_chain);
+	Container::insert(Container::end(), stray_chain.begin(), stray_chain.end());
 	std::cout << "Finished insertion: [" << *this << "]" << std::endl;
 }
 
 template <typename Container>
 void	PmergeMe<Container>::insert_range(It begin, It end, It pos)
 {
-	if (pos > begin && pos <= end)
+	if (end <= begin || (pos > begin && pos <= end))
 		throw std::exception();
 
 	Container tmp(begin, end);
 	std::ptrdiff_t	offset = pos - Container::begin();
 	if (begin < pos)
 		offset -= end - begin;
-	
+
+	std::cout << "sizeof range to insert: " << end - begin << std::endl;
+
 	Container::erase(begin, end);
 	Container::insert(Container::begin() + offset, tmp.begin(), tmp.end());
 }
@@ -141,16 +178,15 @@ typename PmergeMe<Container>::It	PmergeMe<Container>::binary_search(It begin, It
 	It max = end;
 	It mid;
 
-	std::cout << "binary_search offset min: " << begin - Container::begin() << " offset max: " << end - Container::begin() << " target: " << target << std::endl;
 	while (min < max)
 	{
-		std::cout << "before: min: " << min - Container::begin() << " max: " <<max - Container::begin() << std::endl;
+		std::cout << "before: min: " << min - begin << " max: " <<max - begin << std::endl;
 		mid = min + (((max - min) / 2) / step) * step;
 		if (*mid > target)
 			max = mid;
 		else
 			min = mid + step;
-		std::cout << "after: min: " << min - Container::begin() << " max: " <<max - Container::begin() << std::endl;
+		std::cout << "after: min: " << min - begin << " max: " <<max - begin << std::endl;
 	}
 	if (min != end && *min <= target)
 		min += step;
