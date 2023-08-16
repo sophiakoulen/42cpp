@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:01:24 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/16 12:23:54 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/16 14:50:32 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,14 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 {
 	std::cout << "Step = " << step << " begin: " << begin - Container::begin() << " end: " << end - Container::begin() << std::endl;
 
-	if (step >= Container::size())
+	if (2 * step > Container::size())
 		return ;
 
-	std::ptrdiff_t range = end - begin;
+	int range = end - begin;
 
 	/* for each pair of chunks, put the largest left */
 	It	it;
-	for (it = begin; it < end; it += 2 * step)
+	for (it = begin; end - it >= 2 * (int)step; it += 2 * step)
 	{
 		if (*it < *(it + step))
 			swap_range(it, it + step, it + step, it + 2 * step);
@@ -83,11 +83,25 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 	std::cout << "End of recursive call; step = "<< step << std::endl;
 
 	/* start inserting the chunks */
-	for (std::ptrdiff_t i = 0; i < range; i += 2 * step)
+	for (int i = 0; range - i >= 2 * (int)step; i += 2 * step)
 	{
+		std::cout << "i: " << i << "; i + step: " << i + (std::ptrdiff_t)step << std::endl; 
 		It pos = binary_search(Container::begin(), Container::begin() + i, step, *(Container::begin() + i + step));
 		std::cout << "pos: " << pos - Container::begin() << std::endl;
+		std::cout << "Range of insertion: [" << i + step << ", "<<i + 2 * step <<"]" << std::endl;
 		insert_range(Container::begin() + i + step, Container::begin() + i + 2 * step, pos);
+		std::cout << "[" << *this << "]" << std::endl;
+	}
+
+	//insert lonely chunk if there is one
+	if (range % (2 * step) >= step)
+	{
+		int i = (range / (2 * step)) * 2 * step;
+		std::cout << "Insertion of lonely chunk" << std::endl;
+		It pos = binary_search(Container::begin(), Container::begin() + i, step, *(Container::begin() + i));
+		std::cout << "pos: " << pos - Container::begin() << std::endl;
+		std::cout << "Range of insertion: [" << i << ", "<<i + step <<"]" << std::endl;
+		insert_range(Container::begin() + i, Container::begin() + i + step, pos);
 		std::cout << "[" << *this << "]" << std::endl;
 	}
 
@@ -97,7 +111,7 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 template <typename Container>
 void	PmergeMe<Container>::insert_range(It begin, It end, It pos)
 {
-	if (pos >= begin && pos <= end)
+	if (pos > begin && pos <= end)
 		throw std::exception();
 
 	Container tmp(begin, end);
