@@ -8,7 +8,14 @@ int main()
 		p.push_back(i);
 
 
-	p.insert_range(p.begin() + 2, p.begin() + 7, p.end());
+	PmergeMe<std::vector<int> >::iterator	it;
+	int step = 2;
+	for (it = p.begin(); it < p.end(); it += 2 * step)
+	{
+		if (*it < *(it + step))
+			p.swap_range(it, it + step, it + step, it + 2 * step);
+	}
+
 	for(unsigned int i = 0; i < p.size(); i++)
 	{
 		std::cout << p[i] << " ";

@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:00:26 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/14 13:08:03 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/16 10:19:49 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ class PmergeMe : public Container
 		void	swap_range(It b1, It e1, It b2, It e2);
 		It		binary_search(It begin, It end, size_t step, Val target);
 };
+
+template<typename Container>
+std::ostream&	operator<<(std::ostream& o, const PmergeMe<Container>& p);
 
 # include "PmergeMe.tpp"
 
