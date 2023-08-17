@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:01:24 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/16 17:44:07 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/17 11:44:37 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ float	PmergeMe<Container>::sort()
 
 	gettimeofday(&tv1, 0);
 	recursive_sort(Container::begin(), Container::end(), 1);
-	std::cout << "FINISHED SORTING!" << std::endl;
 	gettimeofday(&tv2, 0);
 	return (tv2.tv_sec - tv1.tv_sec) * 1000000 + tv2.tv_usec - tv1.tv_usec;
 }
@@ -62,8 +61,6 @@ float	PmergeMe<Container>::sort()
 template <typename Container>
 void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 {
-	std::cout << "Step = " << step << " begin: " << begin - Container::begin() << " end: " << end - Container::begin() << std::endl;
-
 	if (2 * step > Container::size())
 		return ;
 
@@ -75,12 +72,11 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 	{
 		if (*it < *(it + step))
 			swap_range(it, it + step, it + step, it + 2 * step);
+		_comparison_count++;
 	}
 
 	/* sort the pairs */
 	recursive_sort(begin, end, step * 2);
-
-	std::cout << "End of recursive call; step = "<< step << std::endl;
 
 	/* divide the container into two chains:
 	 * the main_chain of sorted elements
@@ -94,7 +90,6 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 
 	for (int i = 0; range - i >= 2 * (int)step; i += 2 * step)
 	{
-		std::cout << "i: " << i << std::endl;
 		main_chain.insert(main_chain.end(), Container::begin() + i, Container::begin() + i + step);
 		pend_chain.insert(pend_chain.end(), Container::begin() + i + step, Container::begin() + i + 2 * step);
 	}
@@ -111,36 +106,36 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 		stray_chain.insert(stray_chain.end(), Container::begin() + i, Container::end());
 	}
 
-	std::cout << "main_chain: ";
-	for (size_t i = 0; i < main_chain.size(); i++)
-		std::cout << main_chain[i] << " ";
-	std::cout << std::endl;
-	
-	std::cout << "pend_chain: ";
-	for (size_t i = 0; i < pend_chain.size(); i++)
-		std::cout << pend_chain[i] << " ";
-	std::cout << std::endl;
-
-	std::cout << "stray_chain: ";
-	for (size_t i = 0; i < stray_chain.size(); i++)
-		std::cout << stray_chain[i] << " ";
-	std::cout << std::endl;
-
-
-	/* start inserting the chunks */
-	for (unsigned int i = 0; i < pend_chain.size(); i += step)
+	/* insert the chunks from pend_chain using jacobstahl order */
+	unsigned int min_pos = 0;
+	unsigned int current_pos = 0;
+	unsigned int max_pos = 0;
+	unsigned int j = 0;
+	while (current_pos * step < pend_chain.size())
 	{
+		max_pos = std::max(max_pos, current_pos);
+		int i = current_pos * step;
 		It pos = binary_search(main_chain.begin(), main_chain.end(), step, pend_chain[i]);
-		std::cout << "position to insert: " << pos - main_chain.begin() << std::endl;
-		std::cout << "range to insert: [" << i << "; " << i + step << "]" << std::endl;
 		main_chain.insert(pos, pend_chain.begin() + i, pend_chain.begin() + i + step);
+		if (current_pos == min_pos)
+		{
+			min_pos = max_pos + 1;
+			current_pos = min_pos + jacobstahl(j++);
+		}
+		current_pos--;
+	}
+	/* insert the remaining elements from pend_chain */
+	current_pos = max_pos + 1;
+	while (current_pos * step < pend_chain.size())
+	{
+		int i = current_pos * step;
+		It pos = binary_search(main_chain.begin(), main_chain.end(), step, pend_chain[i]);
+		main_chain.insert(pos, pend_chain.begin() + i, pend_chain.begin() + i + step);
+		current_pos++;
 	}
 
-	
-	std::cout << "Before operator=: [" << *this << "]" << std::endl;
 	Container::operator=(main_chain);
 	Container::insert(Container::end(), stray_chain.begin(), stray_chain.end());
-	std::cout << "Finished insertion: [" << *this << "]" << std::endl;
 }
 
 template <typename Container>
@@ -153,8 +148,6 @@ void	PmergeMe<Container>::insert_range(It begin, It end, It pos)
 	std::ptrdiff_t	offset = pos - Container::begin();
 	if (begin < pos)
 		offset -= end - begin;
-
-	std::cout << "sizeof range to insert: " << end - begin << std::endl;
 
 	Container::erase(begin, end);
 	Container::insert(Container::begin() + offset, tmp.begin(), tmp.end());
@@ -180,16 +173,20 @@ typename PmergeMe<Container>::It	PmergeMe<Container>::binary_search(It begin, It
 
 	while (min < max)
 	{
-		std::cout << "before: min: " << min - begin << " max: " <<max - begin << std::endl;
 		mid = min + (((max - min) / 2) / step) * step;
 		if (*mid > target)
 			max = mid;
 		else
 			min = mid + step;
-		std::cout << "after: min: " << min - begin << " max: " <<max - begin << std::endl;
+
+		_comparison_count++;
 	}
-	if (min != end && *min <= target)
-		min += step;
+	if (min != end)
+	{
+		if (*min <= target)
+			min += step;
+		_comparison_count++;
+	}
 	return (min);
 }
 
@@ -197,11 +194,39 @@ template <typename Container>
 std::ostream&	operator<<(std::ostream& o, const PmergeMe<Container>& p)
 {
 	typename PmergeMe<Container>::const_iterator	it;
-	for(it = p.begin(); it != p.end(); )
+	for(it = p.begin(); it != p.end() && it - p.begin() < 5; )
 	{
 		o << *it;
 		if (++it != p.end())
-		   o << " ";	
+		   o << "\t";	
 	}
+	if (it != p.end())
+		o << "[...]";
 	return (o);
+}
+
+template <typename Container>
+size_t	PmergeMe<Container>::jacobstahl(size_t i) const
+{
+	const size_t numbers[] =
+	{
+        2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
+        2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
+        1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
+        178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
+        11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
+        366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
+        11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
+        375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
+        6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
+        96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
+        1537228672809129216u, 3074457345618258432u, 6148914691236516864u
+    };
+	return (numbers[i]);
+}
+
+template <typename Container>
+unsigned int	PmergeMe<Container>::getComparisonCount() const
+{
+	return _comparison_count;
 }

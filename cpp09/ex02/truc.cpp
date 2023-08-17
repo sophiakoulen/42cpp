@@ -1,26 +1,17 @@
 #include "PmergeMe.hpp"
 #include <vector>
+#include <deque>
 
 int main()
 {
-	PmergeMe<std::vector<int> >	p;
-	for (int i = 0; i < 10; i++)
-		p.push_back(i);
+	PmergeMe<std::vector<int> > p1;
+	PmergeMe<std::deque<int> >	p2;
 
+	for (unsigned int i = 0; i < 25; i++)
+		std::cout << p1.jacobstahl() << std::endl;
 
-	PmergeMe<std::vector<int> >::iterator	it;
-	int step = 2;
-	for (it = p.begin(); it < p.end(); it += 2 * step)
-	{
-		if (*it < *(it + step))
-			p.swap_range(it, it + step, it + step, it + 2 * step);
-	}
-
-	for(unsigned int i = 0; i < p.size(); i++)
-	{
-		std::cout << p[i] << " ";
-	}
-	std::cout << std::endl;
-
+	for (unsigned int i = 0; i < 25; i++)
+		std::cout << p2.jacobstahl() << std::endl;
+	
 	return 0;
 }
