@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausann>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:30:36 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/11 17:38:41 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/17 16:43:36 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	BitcoinExchange::answerQuery(const std::string& query) const
 	amountStr = query.substr(pos + 3, query.size());
 	amount = std::strtod(amountStr.c_str(), &err_check);
 	
-	if (err_check == amountStr.c_str())
+	if (!isValidDate(date) || *err_check != 0)
 	{
 		std::cout << "Error: bad input => " << query << std::endl;
 		return ;
@@ -136,4 +136,43 @@ void	BitcoinExchange::answerQuery(const std::string& query) const
 	it--;
 
 	std::cout << date << " => " << amount << " = " << it->second  * amount << std::endl;
+}
+
+bool	BitcoinExchange::isValidDate(const std::string& date) const
+{
+	std::string	dateCpy;
+	std::string	yyyy;
+	std::string	mm;
+	std::string	dd;
+	size_t		pos;
+	char		*err_check;
+
+	dateCpy = date;
+	pos = dateCpy.find("-");
+	if (pos == std::string::npos)
+		return false;
+	yyyy = dateCpy.substr(0, pos);
+	dateCpy = dateCpy.substr(pos + 1, dateCpy.size());
+	
+	pos = dateCpy.find("-");
+	if (pos == std::string::npos)
+		return false;
+	mm = dateCpy.substr(0, pos);
+	dateCpy = dateCpy.substr(pos + 1, dateCpy.size());
+
+	dd = dateCpy;
+
+	int year = std::strtol(yyyy.c_str(), &err_check, 10);
+	if (*err_check != 0 || year < 1960 || year > 2060)
+		return (false);
+
+	int month = std::strtol(mm.c_str(), &err_check, 10);
+	if (*err_check != 0 || month < 1 || month > 12)
+		return (false);
+
+	int day = std::strtol(dd.c_str(), &err_check, 10);
+	if (*err_check != 0 || day < 1 || day > 31)
+		return (false);
+
+	return (true);
 }
