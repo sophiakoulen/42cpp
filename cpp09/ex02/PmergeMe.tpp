@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:01:24 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/17 11:44:37 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/17 13:51:33 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 template <typename Container>
 PmergeMe<Container>::PmergeMe()
 {
-
+	_comparison_count = 0;
 }
 
 template <typename Container>
 PmergeMe<Container>::PmergeMe(const PmergeMe<Container>& p):
 	Container(p)
 {
-
+	_comparison_count = 0;
 }
 
 template<typename Container>
@@ -30,7 +30,7 @@ template<typename InputIt>
 PmergeMe<Container>::PmergeMe(InputIt first, InputIt last):
 	Container(first, last)
 {
-
+	_comparison_count = 0;
 }
 
 template <typename Container>
@@ -43,6 +43,7 @@ template <typename Container>
 PmergeMe<Container>&	PmergeMe<Container>::operator=(const PmergeMe<Container>& p)
 {
 	Container::operator=(p);
+	_comparison_count = p._comparison_count;
 	return (*this);
 }
 
@@ -73,6 +74,7 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 		if (*it < *(it + step))
 			swap_range(it, it + step, it + step, it + 2 * step);
 		_comparison_count++;
+		std::cout << "comparison!" << std::endl;
 	}
 
 	/* sort the pairs */
@@ -106,16 +108,44 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 		stray_chain.insert(stray_chain.end(), Container::begin() + i, Container::end());
 	}
 
+	std::cout << "step = " << step << std::endl;
+
+	std::cout << "main chain: ";
+	for (unsigned int i = 0; i < main_chain.size(); i += step)
+	{
+		std::cout << "[";
+		for (unsigned int j = 0; j < step; j++)
+			std::cout << main_chain[i + j] << " ";
+		std::cout << "] ";
+	}
+	std::cout << std::endl;
+
+	std::cout << "pend chain: ";
+	for (unsigned int i = 0; i < pend_chain.size(); i += step)
+	{
+		std::cout << "[";
+		for (unsigned int j = 0; j < step; j++)
+			std::cout << pend_chain[i + j] << " ";
+		std::cout << "] ";
+	}
+	std::cout << std::endl;
+
+	std::cout << "stray chain: ";
+	for (unsigned int i = 0; i < stray_chain.size(); i++)
+		std::cout << stray_chain[i] << " ";
+	std::cout << std::endl;
+	
 	/* insert the chunks from pend_chain using jacobstahl order */
 	unsigned int min_pos = 0;
 	unsigned int current_pos = 0;
 	unsigned int max_pos = 0;
 	unsigned int j = 0;
+	unsigned int inserted_count = 0;
 	while (current_pos * step < pend_chain.size())
 	{
 		max_pos = std::max(max_pos, current_pos);
 		int i = current_pos * step;
-		It pos = binary_search(main_chain.begin(), main_chain.end(), step, pend_chain[i]);
+		It pos = binary_search(main_chain.begin(), main_chain.begin() + i + inserted_count * step, step, pend_chain[i]);
 		main_chain.insert(pos, pend_chain.begin() + i, pend_chain.begin() + i + step);
 		if (current_pos == min_pos)
 		{
@@ -123,7 +153,20 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 			current_pos = min_pos + jacobstahl(j++);
 		}
 		current_pos--;
+		inserted_count++;
+
+		std::cout << "after single insertion: " << std::endl;
+		unsigned int k;	
+		for (k = 0; k + step - 1 < main_chain.size(); k += step)
+		{
+			std::cout << "[";
+			for (unsigned int j = 0; j < step; j++)
+				std::cout << main_chain[k + j] << " ";
+			std::cout << "] ";
+		}
+		std::cout << std::endl;
 	}
+
 	/* insert the remaining elements from pend_chain */
 	current_pos = max_pos + 1;
 	while (current_pos * step < pend_chain.size())
@@ -136,6 +179,20 @@ void	PmergeMe<Container>::recursive_sort(It begin, It end, size_t step)
 
 	Container::operator=(main_chain);
 	Container::insert(Container::end(), stray_chain.begin(), stray_chain.end());
+	
+	std::cout << "after insertion: ";
+	unsigned int k;	
+	for (k = 0; k + step - 1 < Container::size(); k += step)
+	{
+		std::cout << "[";
+		for (unsigned int j = 0; j < step; j++)
+			std::cout << Container::operator[](k + j) << " ";
+		std::cout << "] ";
+	}
+	for (k = (Container::size() / step) * step; k < Container::size(); k++)
+		std::cout << Container::operator[](k) << " ";
+	std::cout << std::endl;
+
 }
 
 template <typename Container>
@@ -180,12 +237,14 @@ typename PmergeMe<Container>::It	PmergeMe<Container>::binary_search(It begin, It
 			min = mid + step;
 
 		_comparison_count++;
+		std::cout << "comparison!" << std::endl;
 	}
 	if (min != end)
 	{
 		if (*min <= target)
 			min += step;
 		_comparison_count++;
+		std::cout << "comparison!" << std::endl;
 	}
 	return (min);
 }
