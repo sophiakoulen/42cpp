@@ -6,7 +6,7 @@
 /*   By: skoulen <skoulen@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:00:26 by skoulen           #+#    #+#             */
-/*   Updated: 2023/08/17 12:49:14 by skoulen          ###   ########.fr       */
+/*   Updated: 2023/08/17 15:13:47 by skoulen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,22 @@ class PmergeMe : public Container
 
 		unsigned int	_comparison_count;
 
+		void			recursive_sort(It begin, It end, size_t step);
+		void			swap_range(It b1, It e1, It b2);
+		It				binary_search(It begin, It end, size_t step, Val target);
+		size_t			jacobstahl(size_t i) const;
+	
 	public:
 		PmergeMe();
 		PmergeMe(const PmergeMe& p);
-
-		template<typename InputIt>
-		PmergeMe(InputIt first, InputIt last);
-		
 		~PmergeMe();
 		PmergeMe&	operator=(const PmergeMe& p);
+		
+		/* Iterator range constructor */
+		template<typename InputIt>
+		PmergeMe(InputIt first, InputIt last);
 
 		float			sort(void);
-		void			recursive_sort(It begin, It end, size_t step);
-		void			insert_range(It begin, It end, It pos);
-		void			swap_range(It b1, It e1, It b2, It e2);
-		It				binary_search(It begin, It end, size_t step, Val target);
-		size_t			jacobstahl(size_t i) const;
 		unsigned int	getComparisonCount() const;
 };
 
